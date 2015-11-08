@@ -1,0 +1,51 @@
+body {
+	font-family: 'Cabin';
+	font-size: 16px;
+}
+
+.header {
+	background-image: url(../images/paw_bg_sm.png);
+}
+
+.navbar-default {
+	background-color: #00a0b2; /*rgba(0, 160, 178, .6);*/
+
+}
+
+.navbar-default .navbar-nav>li>a {
+	color: #fff;
+ 	/*line-height: 67px;*/
+}
+
+.footer p {
+	margin-top: 15px;
+	margin-bottom: 15px;
+	color: #fff;
+} 
+
+@media (min-width: 768px) { 
+    .twoRow .navbar-collapse {
+        clear: left;
+    }
+
+    .navbar-header {
+	    float: left;
+	    padding: 15px;
+	    text-align: center;
+	    width: 100%;
+	}
+
+	.navbar-brand {
+		float:none;
+	}
+
+    .navbar-nav {
+	    width: 100%;
+	    text-align: center;
+	}
+
+	.navbar-nav > li {
+		float: none;
+		display: inline-block;
+	}
+}
