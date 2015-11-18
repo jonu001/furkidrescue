@@ -1,6 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-class Blog_model extends CI_Model {
+class Petfinder_model extends CI_Model {
 
         public $title;
         public $content;
@@ -8,32 +8,36 @@ class Blog_model extends CI_Model {
 
         public function __construct()
         {
-                // Call the CI_Model constructor
-                parent::__construct();
+            parent::__construct();
         }
 
-        public function get_last_ten_entries()
+        public function insert_pet($pet)
         {
-                $query = $this->db->get('entries', 10);
-                return $query->result();
+            $this->db->insert('pet', $pet->general);
+            //var_dump($pet->breed);
+
+            
+            foreach($pet->breed as $breed_info)
+            {
+                //var_dump($breed_info);
+                 $this->db->insert('pet_breed', $breed_info);
+                /*
+                foreach($breed_info as $omg) {
+                 $this->db->insert('pet_breed', $omg);
+                }*/
+            }
+            
+            foreach($pet->photo as $photo_info)
+            {
+                $this->db->insert('pet_photo', $photo_info);
+            }
+            
         }
 
-        public function insert_entry()
+        public function empty_pet_table()
         {
-                $this->title    = $_POST['title']; // please read the below note
-                $this->content  = $_POST['content'];
-                $this->date     = time();
-
-                $this->db->insert('entries', $this);
+            $this->db->empty_table('pet');
+            $this->db->empty_table('pet_breed');
+            $this->db->empty_table('pet_photo');
         }
-
-        public function update_entry()
-        {
-                $this->title    = $_POST['title'];
-                $this->content  = $_POST['content'];
-                $this->date     = time();
-
-                $this->db->update('entries', $this, array('id' => $_POST['id']));
-        }
-
 }

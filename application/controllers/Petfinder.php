@@ -1,16 +1,15 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Adoptable extends CI_Controller {
+class Petfinder extends CI_Controller {
 
 	public function index()
 	{
-		$this->load->model('Petfinder', '', TRUE););
+		$this->load->model('Petfinder_model', '', TRUE);
+		$this->load->library('Pet');
 
 		try {
 
-
-			$mysqli = new mysqli($doc_db_host, $doc_db_username, $doc_db_password, $doc_db_name);
 			if ( ! function_exists('curl_init'))
 			{
 				throw new Exception('cURL is not installed.');
@@ -19,26 +18,82 @@ class Adoptable extends CI_Controller {
 			{
 				log_message('INFO', 'cURL is installed.');
 			}
-
 			$pets = $this->getPets();
-			$total_pets = (int)$pets->{"petfinder"}->{"lastOffset"}->{"$t"};
 
+			$total_pets = (int)$pets->{'petfinder'}->{'lastOffset'}->{'$t'};
 			log_message('INFO', $total_pets . ' pets returned from the API.');
+			$total_pets--;
 
-			if ($mysqli->connect_errno) 
-			{
-			    throw new Exception('Failed to connect to MySQL: (' . $mysqli->connect_errno . ') '  . $mysqli->connect_error);
-			}
-			else 
-			{
-				log_message('INFO', 'Connected to MySQL.');
+			if ($total_pets > 0) {
+
+				$this->Petfinder_model->empty_pet_table();
+				
+				for($x = 0; $x <= $total_pets; $x++) {
+					$general_arr = [];
+					$breed_arr = [];
+					$photo_arr = [];
+
+					$general_arr = ['name' => (property_exists ($pets->{'petfinder'}->{'pets'}->{'pet'}[$x]->{'name'}, '$t') ? 
+													$pets->{'petfinder'}->{'pets'}->{'pet'}[$x]->{'name'}->{'$t'} : ''),
+							 		 'description' => (property_exists ($pets->{'petfinder'}->{'pets'}->{'pet'}[$x]->{'description'}, '$t') ? 
+							 		 				$pets->{'petfinder'}->{'pets'}->{'pet'}[$x]->{'description'}->{'$t'} : ''),
+							 		 'sex' => (property_exists ($pets->{'petfinder'}->{'pets'}->{'pet'}[$x]->{'sex'}, '$t') ? 
+							 		 				$pets->{'petfinder'}->{'pets'}->{'pet'}[$x]->{'sex'}->{'$t'} : ''),
+							 		 'age' => (property_exists ($pets->{'petfinder'}->{'pets'}->{'pet'}[$x]->{'age'}, '$t') ? 
+							 		 				$pets->{'petfinder'}->{'pets'}->{'pet'}[$x]->{'age'}->{'$t'} : ''),
+							 		 'pet_id' => $pets->{'petfinder'}->{'pets'}->{'pet'}[$x]->{'id'}->{'$t'},
+							 		 'type' => (property_exists ($pets->{'petfinder'}->{'pets'}->{'pet'}[$x]->{'animal'}, '$t') ? 
+							 		 				$pets->{'petfinder'}->{'pets'}->{'pet'}[$x]->{'animal'}->{'$t'} : '')
+							];
+
+					$breed_count = count($pets->{'petfinder'}->{'pets'}->{'pet'}[$x]->{'breeds'}->{'breed'});
+					if ($breed_count > 1) {
+						$breed_count--;
+						for($y = 0; $y <= $breed_count; $y++) {
+							array_push($breed_arr, ['breed' => $pets->{'petfinder'}->{'pets'}->{'pet'}[$x]->{'breeds'}->{'breed'}[$y]->{'$t'},
+												'pet_id' => $pets->{'petfinder'}->{'pets'}->{'pet'}[$x]->{'id'}->{'$t'}
+												]);
+						}
+
+					} else {
+						array_push($breed_arr, ['breed' => $pets->{'petfinder'}->{'pets'}->{'pet'}[$x]->{'breeds'}->{'breed'}->{'$t'},
+											'pet_id' => $pets->{'petfinder'}->{'pets'}->{'pet'}[$x]->{'id'}->{'$t'}
+										]);
+					}
+
+					
+					$photo_count = count($pets->{'petfinder'}->{'pets'}->{'pet'}[$x]->{'media'}->{'photos'}->{'photo'});
+					if ($photo_count > 1) {
+						$photo_count--;
+						for($z = 0; $z <= $photo_count; $z++) {
+							array_push($photo_arr, ['photo' => $pets->{'petfinder'}->{'pets'}->{'pet'}[$x]->{'media'}->{'photos'}->{'photo'}[$z]->{'$t'},
+											'pet_id' => $pets->{'petfinder'}->{'pets'}->{'pet'}[$x]->{'id'}->{'$t'}
+											]);
+						}
+					} else {
+							array_push($photo_arr, ['photo' => $pets->{'petfinder'}->{'pets'}->{'pet'}[$x]->{'media'}->{'photos'}->{'photo'}->{'$t'},
+											'pet_id' => $pets->{'petfinder'}->{'pets'}->{'pet'}[$x]->{'id'}->{'$t'}
+											]);
+					}
+					
+
+					//var_dump($breed_arr);
+					$pet = new Pet();
+					$pet->general = $general_arr;
+					$pet->breed = $breed_arr;
+					$pet->photo = $photo_arr;
+
+					//var_dump($breed_arr);
+					$this->Petfinder_model->insert_pet($pet);
+
+				}
+				
+
 			}
 
 		} catch (Exception $e) {
 
 		}
-
-
 	}
 
 	function getPets()
