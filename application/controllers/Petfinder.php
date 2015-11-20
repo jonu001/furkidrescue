@@ -71,19 +71,16 @@ class Petfinder extends CI_Controller {
 											]);
 						}
 					} else {
-							array_push($photo_arr, ['photo' => $pets->{'petfinder'}->{'pets'}->{'pet'}[$x]->{'media'}->{'photos'}->{'photo'}->{'$t'},
+						array_push($photo_arr, ['photo' => $pets->{'petfinder'}->{'pets'}->{'pet'}[$x]->{'media'}->{'photos'}->{'photo'}->{'$t'},
 											'pet_id' => $pets->{'petfinder'}->{'pets'}->{'pet'}[$x]->{'id'}->{'$t'}
 											]);
 					}
 					
-
-					//var_dump($breed_arr);
 					$pet = new Pet();
 					$pet->general = $general_arr;
 					$pet->breed = $breed_arr;
 					$pet->photo = $photo_arr;
 
-					//var_dump($breed_arr);
 					$this->Petfinder_model->insert_pet($pet);
 
 				}
@@ -92,7 +89,7 @@ class Petfinder extends CI_Controller {
 			}
 
 		} catch (Exception $e) {
-
+			log_message('ERROR', $e->getMessage());
 		}
 	}
 
@@ -159,5 +156,4 @@ class Petfinder extends CI_Controller {
 			//send_email('ERROR', $e->getMessage());
 		}
 	}
-
 }
