@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 		<meta charset="utf-8">
 		<title>Fur Kid Rescue</title>
-		<link rel="shortcut icon" href="favicon.ico" />
+		<link rel="shortcut icon" href="<?php echo $this->config->base_url('favicon.ico'); ?>" />
 		<meta name="generator" content="Bootply" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 		<link href="<?php echo $this->config->base_url('css/bootstrap.min.css'); ?>" rel="stylesheet">

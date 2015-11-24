@@ -7,13 +7,26 @@ class Adoptable_model extends CI_Model {
             parent::__construct();
         }
 
-        public function get_pets()
+        public function get_pet_general()
         {
             $this->db->select('*');
             $this->db->from('pet');
-            $this->db->join('pet_breed', 'pet.pet_id = pet_breed.pet_id', 'left outer');
-            $this->db->join('pet_photo', 'pet.pet_id = pet_photo.pet_id', 'left outer');
+           return $this->db->get();
+        }
+
+        public function get_pet_breeds()
+        {
+            $this->db->select('*');
+            $this->db->from('pet_breed');
+            $this->db->join('pet', 'pet_breed.pet_id = pet.pet_id');
             return $this->db->get();
         }
 
+        public function get_pet_photos()
+        {
+            $this->db->select('*');
+            $this->db->from('pet_photo');
+            $this->db->join('pet', 'pet_photo.pet_id = pet.pet_id');
+            return $this->db->get();
+        }
 }
