@@ -11,7 +11,7 @@ class Adoptable_model extends CI_Model {
         {
             $this->db->select('*');
             $this->db->from('pet');
-           return $this->db->get();
+           return $this->db->get()->result_array();
         }
 
         public function get_pet_breeds()
@@ -19,7 +19,7 @@ class Adoptable_model extends CI_Model {
             $this->db->select('*');
             $this->db->from('pet_breed');
             $this->db->join('pet', 'pet_breed.pet_id = pet.pet_id');
-            return $this->db->get();
+            return $this->db->get()->result_array();
         }
 
         public function get_pet_photos()
@@ -27,6 +27,6 @@ class Adoptable_model extends CI_Model {
             $this->db->select('*');
             $this->db->from('pet_photo');
             $this->db->join('pet', 'pet_photo.pet_id = pet.pet_id');
-            return $this->db->get();
+            return $this->db->get()->result_array();
         }
 }
