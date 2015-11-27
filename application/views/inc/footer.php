@@ -1,8 +1,8 @@
-<div class="navbar navbar-default navbar-fixed-bottom footer">
+<footer class="footer">
   <div class="container-fluid">
-    <p class="text-center">Site built by jdu-apps</p>
+    <p class="text-center">Site built by perphorm</p>
   </div>
-</div>
+</footer>
 <!-- /.container -->
 	<!-- script references -->
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>

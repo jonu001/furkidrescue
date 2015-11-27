@@ -57,13 +57,6 @@ a:hover {
 	}
 }
 
-
-.pet_box.bogart {
-	background-image: url('http://photos.petfinder.com/photos/pets/33338593/2/?width=500&-x.jpg');
-	background-position:  50px 0px;
-	background-repeat: no-repeat;
-}
-
 .pet_box {
     float: left;
     width: 475px;
@@ -72,6 +65,26 @@ a:hover {
     margin: 0 0 10px;
     border-radius: 25px;
     border: 2px solid #fff;
+    .center-block();
+}
+
+.pet_box.bogart {
+	background-image: url('http://photos.petfinder.com/photos/pets/33338593/2/?width=500&-x.jpg');
+	background-position:  50px 0px;
+	background-repeat: no-repeat;
+}
+.pet_box.bogart .pane-info {
+    background-image: url('http://photos.petfinder.com/photos/pets/33338593/3/?bust=1446573223&width=300&-pn.jpg');
+}
+
+.pet_box .pane-info {
+    width: 225px;
+    height: 267px;
+    position: absolute;
+    left: 0;
+    top: 0;    
+    border-top-left-radius: 25px;
+    border-bottom-left-radius: 25px;
 }
 
 .pet_box .summary {
@@ -100,13 +113,48 @@ a:hover {
     margin: 0 0 1em;
 }
 
-.pet_box.bogart .image-second {
-    width: 225px;
-    height: 267px;
-    position: absolute;
-    left: 0;
-    top: 0;
-    background-image: url('http://photos.petfinder.com/photos/pets/33338593/3/?bust=1446573223&width=300&-pn.jpg');
-    border-top-left-radius: 25px;
-    border-bottom-left-radius: 25px;
+.center-block() {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media only screen and (max-width: 768px) {
+
+	.pet_box.bogart {
+		background-image: url('http://photos.petfinder.com/photos/pets/33338593/2/?width=500&-x.jpg');
+		background-position: -120px -60px;
+	}
+
+	.pet_box {
+		width: 290px;
+		background-repeat: no-repeat;
+		margin-top: 10px;
+		margin-right: 5px;
+		text-align: center;
+	}
+
+	.pet_box > div {
+		width: 100%;
+		height: inherit;
+		position: relative;
+	}
+
+	.pet_box .pane-info {
+		background: none !important;
+	    width: 100%;
+	}
+
+	.pet_box .summary {
+	    height: 100px;
+	    width: 100%;
+		background:rgba(0, 0, 0, 0.8) none !important;
+	    border-top-left-radius: 0px;
+	    border-bottom-left-radius: 25px;
+	    border-bottom-right-radius: 25px;
+	}
+
+	.pet_box p:first-of-type {
+		display: none;
+	}
 }

@@ -19,7 +19,6 @@ class Petfinder extends CI_Controller {
 				log_message('INFO', 'cURL is installed.');
 			}
 			$pets = $this->getPets();
-
 			$total_pets = (int)$pets->{'petfinder'}->{'lastOffset'}->{'$t'};
 			log_message('INFO', $total_pets . ' pets returned from the API.');
 			$total_pets--;
@@ -41,6 +40,8 @@ class Petfinder extends CI_Controller {
 							 		 				$pets->{'petfinder'}->{'pets'}->{'pet'}[$x]->{'sex'}->{'$t'} : ''),
 							 		 'age' => (property_exists ($pets->{'petfinder'}->{'pets'}->{'pet'}[$x]->{'age'}, '$t') ? 
 							 		 				$pets->{'petfinder'}->{'pets'}->{'pet'}[$x]->{'age'}->{'$t'} : ''),
+							 		 'size' => (property_exists ($pets->{'petfinder'}->{'pets'}->{'pet'}[$x]->{'size'}, '$t') ? 
+							 		 				$pets->{'petfinder'}->{'pets'}->{'pet'}[$x]->{'size'}->{'$t'} : ''),
 							 		 'pet_id' => $pets->{'petfinder'}->{'pets'}->{'pet'}[$x]->{'id'}->{'$t'},
 							 		 'type' => (property_exists ($pets->{'petfinder'}->{'pets'}->{'pet'}[$x]->{'animal'}, '$t') ? 
 							 		 				$pets->{'petfinder'}->{'pets'}->{'pet'}[$x]->{'animal'}->{'$t'} : '')
