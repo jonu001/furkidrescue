@@ -19,84 +19,87 @@ class Petfinder extends CI_Controller {
 				log_message('INFO', 'cURL is installed.');
 			}
 			$pets = $this->getPets();
-			//echo $pets->{'petfinder'}->{'pets'}->{'pet'}[13]->{'name'}->{'$t'};die();
-			//var_dump($this->exists_in_object_array('hasShots', $pets->{'petfinder'}->{'pets'}->{'pet'}[13]->{'options'}->{'option'}));die();
-			$total_pets = (int)$pets->{'petfinder'}->{'lastOffset'}->{'$t'};
-			log_message('INFO', $total_pets . ' pets returned from the API.');
-			$total_pets--;
 
-			if ($total_pets > 0) {
+			if (isset($pets)) {
+				//echo $pets->{'petfinder'}->{'pets'}->{'pet'}[13]->{'name'}->{'$t'};die();
+				//var_dump($this->exists_in_object_array('hasShots', $pets->{'petfinder'}->{'pets'}->{'pet'}[13]->{'options'}->{'option'}));die();
+				$total_pets = (int)$pets->{'petfinder'}->{'lastOffset'}->{'$t'};
+				log_message('INFO', $total_pets . ' pets returned from the API.');
+				$total_pets--;
 
-				$this->Petfinder_model->empty_pet_table();
-				
-				for($x = 0; $x <= $total_pets; $x++) {
-					$general_arr = [];
-					$breed_arr = [];
-					$photo_arr = [];
+				if ($total_pets > 0) {
 
-					$pet = $pets->{'petfinder'}->{'pets'}->{'pet'}[$x];
+					$this->Petfinder_model->empty_pet_table();
+					
+					for($x = 0; $x <= $total_pets; $x++) {
+						$general_arr = [];
+						$breed_arr = [];
+						$photo_arr = [];
 
-					$general_arr = [
-							 		 'pet_id' => $pet->{'id'}->{'$t'},
-							 		 'name' => (property_exists ($pet->{'name'}, '$t') ? 
-													$pet->{'name'}->{'$t'} : ''),
-							 		 'description' => (property_exists ($pet->{'description'}, '$t') ? 
-							 		 				$pet->{'description'}->{'$t'} : ''),
-							 		 'sex' => (property_exists ($pet->{'sex'}, '$t') ? 
-							 		 				$pet->{'sex'}->{'$t'} : ''),
-							 		 'age' => (property_exists ($pet->{'age'}, '$t') ? 
-							 		 				$pet->{'age'}->{'$t'} : ''),
-							 		 'type' => (property_exists ($pet->{'animal'}, '$t') ? 
-							 		 				$pet->{'animal'}->{'$t'} : ''),
-							 		 'size' => (property_exists ($pet->{'size'}, '$t') ? 
-							 		 				$pet->{'size'}->{'$t'} : ''),
-							 		 'altered' => $this->exists_in_object_array('altered', $pet->{'options'}->{'option'}),
-							 		 'shots' => $this->exists_in_object_array('hasShots', $pet->{'options'}->{'option'}),
-							 		 'house_trained' => $this->exists_in_object_array('housetrained', $pet->{'options'}->{'option'}),
-							 		 'special_needs' => $this->exists_in_object_array('specialNeeds', $pet->{'options'}->{'option'}),
-							 		 'no_cats' => $this->exists_in_object_array('noCats', $pet->{'options'}->{'option'})
-							];
+						$pet = $pets->{'petfinder'}->{'pets'}->{'pet'}[18];
 
-					$breed_count = count($pet->{'breeds'}->{'breed'});
-					if ($breed_count > 1) {
-						$breed_count--;
-						for($y = 0; $y <= $breed_count; $y++) {
-							array_push($breed_arr, ['breed' => $pet->{'breeds'}->{'breed'}[$y]->{'$t'},
+						$general_arr = [
+								 		 'pet_id' => $pet->{'id'}->{'$t'},
+								 		 'name' => (property_exists ($pet->{'name'}, '$t') ? 
+														$pet->{'name'}->{'$t'} : ''),
+								 		 'description' => (property_exists ($pet->{'description'}, '$t') ? 
+								 		 				$pet->{'description'}->{'$t'} : ''),
+								 		 'sex' => (property_exists ($pet->{'sex'}, '$t') ? 
+								 		 				$pet->{'sex'}->{'$t'} : ''),
+								 		 'age' => (property_exists ($pet->{'age'}, '$t') ? 
+								 		 				$pet->{'age'}->{'$t'} : ''),
+								 		 'type' => (property_exists ($pet->{'animal'}, '$t') ? 
+								 		 				$pet->{'animal'}->{'$t'} : ''),
+								 		 'size' => (property_exists ($pet->{'size'}, '$t') ? 
+								 		 				$pet->{'size'}->{'$t'} : ''),
+								 		 'altered' => $this->exists_in_object_array('altered', $pet->{'options'})/*,
+								 		 'shots' => $this->exists_in_object_array('hasShots', $pet->{'options'}->{'option'}),
+								 		 'house_trained' => $this->exists_in_object_array('housetrained', $pet->{'options'}->{'option'}),
+								 		 'special_needs' => $this->exists_in_object_array('specialNeeds', $pet->{'options'}->{'option'}),
+								 		 'no_cats' => $this->exists_in_object_array('noCats', $pet->{'options'}->{'option'})*/
+								];
+						/*
+						$breed_count = count($pet->{'breeds'}->{'breed'});
+						if ($breed_count > 1) {
+							$breed_count--;
+							for($y = 0; $y <= $breed_count; $y++) {
+								array_push($breed_arr, ['breed' => $pet->{'breeds'}->{'breed'}[$y]->{'$t'},
+													'pet_id' => $pet->{'id'}->{'$t'}
+													]);
+							}
+
+						} else {
+							array_push($breed_arr, ['breed' => $pet->{'breeds'}->{'breed'}->{'$t'},
+												'pet_id' => $pet->{'id'}->{'$t'}
+											]);
+						}
+
+						
+						$photo_count = count($pet->{'media'}->{'photos'}->{'photo'});
+						if ($photo_count > 1) {
+							$photo_count--;
+							for($z = 0; $z <= $photo_count; $z++) {
+								array_push($photo_arr, ['photo' => $pet->{'media'}->{'photos'}->{'photo'}[$z]->{'$t'},
+												'pet_id' => $pet->{'id'}->{'$t'}
+												]);
+							}
+						} else {
+							array_push($photo_arr, ['photo' => $pet->{'media'}->{'photos'}->{'photo'}->{'$t'},
 												'pet_id' => $pet->{'id'}->{'$t'}
 												]);
 						}
+						*/
+						$pet = new Pet();
+						$pet->general = $general_arr;
+						$pet->breed = $breed_arr;
+						$pet->photo = $photo_arr;
 
-					} else {
-						array_push($breed_arr, ['breed' => $pet->{'breeds'}->{'breed'}->{'$t'},
-											'pet_id' => $pet->{'id'}->{'$t'}
-										]);
+						$this->Petfinder_model->insert_pet($pet);
+
 					}
-
-					
-					$photo_count = count($pet->{'media'}->{'photos'}->{'photo'});
-					if ($photo_count > 1) {
-						$photo_count--;
-						for($z = 0; $z <= $photo_count; $z++) {
-							array_push($photo_arr, ['photo' => $pet->{'media'}->{'photos'}->{'photo'}[$z]->{'$t'},
-											'pet_id' => $pet->{'id'}->{'$t'}
-											]);
-						}
-					} else {
-						array_push($photo_arr, ['photo' => $pet->{'media'}->{'photos'}->{'photo'}->{'$t'},
-											'pet_id' => $pet->{'id'}->{'$t'}
-											]);
-					}
-					
-					$pet = new Pet();
-					$pet->general = $general_arr;
-					$pet->breed = $breed_arr;
-					$pet->photo = $photo_arr;
-
-					$this->Petfinder_model->insert_pet($pet);
-
 				}
-				
-
+			} else {
+				echo 'Petfinder cURL Issue';
 			}
 
 		} catch (Exception $e) {
@@ -110,13 +113,15 @@ class Petfinder extends CI_Controller {
 			$petfinder_id = $this->config->item('shelter_id', 'petfinder_api');
 			$url = $this->config->item('url', 'petfinder_api');
 			$key = $this->config->item('key', 'petfinder_api');
+			/*
 			$secret = $this->config->item('secret', 'petfinder_api');
 			$token_sig = md5($secret . 'format=json&key=' . $key);
 
 			$token_json = json_decode($this->curl_download($url . 'auth.getToken?format=json&key=' . $key . '&sig=' . $token_sig));
 			$token = $token_json->{'petfinder'}->{'auth'}->{'token'}->{'$t'};
 			$request_sig = md5($secret . 'format=json&key=' . $key . '&id=' . $petfinder_id . '&token=' . $token);
-			$furkid_json = json_decode($this->curl_download($url . 'shelter.getPets?format=json&key=' . $key . '&id=' . $petfinder_id . '&token=' . $token . '&sig=' . $request_sig));
+			*/
+			$furkid_json = json_decode($this->curl_download($url . 'shelter.getPets?format=json&key=' . $key . '&id=' . $petfinder_id));
 
 		return $furkid_json;
 
@@ -170,24 +175,31 @@ class Petfinder extends CI_Controller {
 
 	function exists_in_object_array($needle, $haystack)
 	{
-		$result = false;
+
+
 		if (is_array($haystack))
 		{
 			foreach ($haystack as $row)
 			{
 				if ($row->{'$t'} === $needle)
 				{
-					$result = true;
-					break;
+
 				}
 			} 
 		} else {
 			if ($haystack->{'$t'} === $needle)
 			{
-				$result = true;
+
 			}
 		}
 
 		return $result;
+	}
+
+	function key_exists($needle, $haystack)
+	{
+		if (is_object($haystack)) {
+			
+		}
 	}
 }
