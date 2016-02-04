@@ -16,15 +16,15 @@ class Petfinder extends CI_Controller {
 			}
 			else 
 			{
-				log_message('INFO', 'cURL is installed.');
+				log_message('info', 'cURL is installed.');
 			}
 			$pets = $this->getPets();
-
+			//var_dump($pets);die();
 			if (isset($pets)) {
-				//echo $pets->{'petfinder'}->{'pets'}->{'pet'}[13]->{'name'}->{'$t'};die();
+	;			//echo $pets->{'petfinder'}->{'pets'}->{'pet'}[13]->{'name'}->{'$t'};die();
 				//var_dump($this->exists_in_object_array('hasShots', $pets->{'petfinder'}->{'pets'}->{'pet'}[13]->{'options'}->{'option'}));die();
 				$total_pets = (int)$pets->{'petfinder'}->{'lastOffset'}->{'$t'};
-				log_message('INFO', $total_pets . ' pets returned from the API.');
+				log_message('info', $total_pets . ' pets returned from the API.');
 				$total_pets--;
 
 				if ($total_pets > 0) {
@@ -35,8 +35,7 @@ class Petfinder extends CI_Controller {
 						$general_arr = [];
 						$breed_arr = [];
 						$photo_arr = [];
-
-						$pet = $pets->{'petfinder'}->{'pets'}->{'pet'}[18];
+						$pet = $pets->{'petfinder'}->{'pets'}->{'pet'}[$x];
 
 						$general_arr = [
 								 		 'pet_id' => $pet->{'id'}->{'$t'},
@@ -52,13 +51,13 @@ class Petfinder extends CI_Controller {
 								 		 				$pet->{'animal'}->{'$t'} : ''),
 								 		 'size' => (property_exists ($pet->{'size'}, '$t') ? 
 								 		 				$pet->{'size'}->{'$t'} : ''),
-								 		 'altered' => $this->exists_in_object_array('altered', $pet->{'options'})/*,
-								 		 'shots' => $this->exists_in_object_array('hasShots', $pet->{'options'}->{'option'}),
-								 		 'house_trained' => $this->exists_in_object_array('housetrained', $pet->{'options'}->{'option'}),
-								 		 'special_needs' => $this->exists_in_object_array('specialNeeds', $pet->{'options'}->{'option'}),
-								 		 'no_cats' => $this->exists_in_object_array('noCats', $pet->{'options'}->{'option'})*/
+								 		 'altered' => $this->pet_option_exists('altered', $pet->{'options'}),
+								 		 'shots' => $this->pet_option_exists('hasShots', $pet->{'options'}),
+								 		 'house_trained' => $this->pet_option_exists('housetrained', $pet->{'options'}),
+								 		 'special_needs' => $this->pet_option_exists('specialNeeds', $pet->{'options'}),
+								 		 'no_cats' => $this->pet_option_exists('noCats', $pet->{'options'})
 								];
-						/*
+						
 						$breed_count = count($pet->{'breeds'}->{'breed'});
 						if ($breed_count > 1) {
 							$breed_count--;
@@ -88,7 +87,7 @@ class Petfinder extends CI_Controller {
 												'pet_id' => $pet->{'id'}->{'$t'}
 												]);
 						}
-						*/
+						
 						$pet = new Pet();
 						$pet->general = $general_arr;
 						$pet->breed = $breed_arr;
@@ -103,7 +102,7 @@ class Petfinder extends CI_Controller {
 			}
 
 		} catch (Exception $e) {
-			log_message('ERROR', $e->getMessage());
+			log_message('error', $e->getMessage());
 		}
 	}
 
@@ -153,53 +152,55 @@ class Petfinder extends CI_Controller {
 			throw $e;
 		}
 	}
-
-	function log_message($message_type, $message) 
-	{
-		try {
-			$custom_debug_level = $this->config->item('custom_debug_level');
-			if (($custom_debug_level === 'ALL') OR ($custom_debug_level === 'ERROR' AND $message_type === 'ERROR') OR ($message_type === 'JOB'))
-			{				
-				$fp = fopen($this->config->item('custom_log_path'), 'a');
-				$dt = new DateTime("now");
-				$dt->setTimestamp(time());
-				$line   = '[' . $dt->format('Y-m-d H:i:s') . '] Pet Load:' . $message_type . ': ' . $message . "\n";
-				fwrite($fp, $line);
-				fclose($fp);
-				
-			} 	
-		} catch (Exception $e) {
-			//send_email('ERROR', $e->getMessage());
-		}
+/*
+	array(1) {
+	  ["option"]=>
+	  array(3) {
+	    [0]=>
+	    object(stdClass)#776 (1) {
+	      ["$t"]=>
+	      string(8) "hasShots"
+	    }
+	    [1]=>
+	    object(stdClass)#777 (1) {
+	      ["$t"]=>
+	      string(7) "altered"
+	    }
+	    [2]=>
+	    object(stdClass)#778 (1) {
+	      ["$t"]=>
+	      string(12) "housetrained"
+	    }
+	  }
 	}
+*/
+//array(1) { ["option"]=> array(3) { [0]=> object(stdClass)#776 (1) { ["$t"]=> string(8) "hasShots" } [1]=> object(stdClass)#777 (1) { ["$t"]=> string(7) "altered" } [2]=> object(stdClass)#778 (1) { ["$t"]=> string(12) "housetrained" } } }
 
-	function exists_in_object_array($needle, $haystack)
+// array(1) { ["option"]=> object(stdClass)#859 (1) { ["$t"]=> string(8) "hasShots" } }
+	function pet_option_exists($needle, $haystack)
 	{
+		$return_val = FALSE;
+		$object_array = get_object_vars($haystack);
+		
+		if (count($object_array) !== 0) {
 
+			if (key($object_array) === 'option') {
 
-		if (is_array($haystack))
-		{
-			foreach ($haystack as $row)
-			{
-				if ($row->{'$t'} === $needle)
-				{
-
+				foreach($object_array as $i => $values) {
+					if (count($values) > 1) {
+						foreach($values as $key => $value) {
+							if ($value->{'$t'}  === $needle) {
+								$return_val = TRUE;
+							}
+						}
+					} else {
+						if ($values->{'$t'}  === $needle) {
+							$return_val = TRUE;
+						}
+					}
 				}
-			} 
-		} else {
-			if ($haystack->{'$t'} === $needle)
-			{
-
 			}
 		}
-
-		return $result;
-	}
-
-	function key_exists($needle, $haystack)
-	{
-		if (is_object($haystack)) {
-			
-		}
+		return $return_val;
 	}
 }
