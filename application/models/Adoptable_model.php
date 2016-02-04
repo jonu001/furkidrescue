@@ -11,6 +11,7 @@ class Adoptable_model extends CI_Model {
         {
             $this->db->select('*');
             $this->db->from('pet');
+            $this->db->order_by('pet_id', 'random');
            return $this->db->get()->result_array();
         }
 

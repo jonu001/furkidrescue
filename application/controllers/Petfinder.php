@@ -189,12 +189,12 @@ class Petfinder extends CI_Controller {
 				foreach($object_array as $i => $values) {
 					if (count($values) > 1) {
 						foreach($values as $key => $value) {
-							if ($value->{'$t'}  === $needle) {
+							if ($value->{'$t'} === $needle) {
 								$return_val = TRUE;
 							}
 						}
 					} else {
-						if ($values->{'$t'}  === $needle) {
+						if ($values->{'$t'} === $needle) {
 							$return_val = TRUE;
 						}
 					}
